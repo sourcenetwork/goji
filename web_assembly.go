@@ -18,17 +18,17 @@ var WebAssembly webAssemblyJS
 // Compile is a wrapper for the WebAssembly compile static method.
 //
 // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/compile_static
-func (w webAssemblyJS) Compile(bufferSource js.Value) promiseValue {
+func (w webAssemblyJS) Compile(bufferSource js.Value) PromiseValue {
 	res := js.Value(w).Call("compile", bufferSource)
-	return promiseValue(res)
+	return PromiseValue(res)
 }
 
 // Instantiate is a wrapper for the WebAssembly instantiate static method.
 //
 // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiate_static
-func (w webAssemblyJS) Instantiate(bufferSourceOrModule js.Value, importObject js.Value) promiseValue {
+func (w webAssemblyJS) Instantiate(bufferSourceOrModule js.Value, importObject js.Value) PromiseValue {
 	res := js.Value(w).Call("instantiate", bufferSourceOrModule, importObject)
-	return promiseValue(res)
+	return PromiseValue(res)
 }
 
 // Validate is a wrapper for the WebAssembly validate static method.

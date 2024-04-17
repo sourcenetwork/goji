@@ -18,30 +18,31 @@ var EventTarget eventTargetJS
 // New wraps the EventTarget constructor.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/EventTarget
-func (e eventTargetJS) New() eventTargetValue {
+func (e eventTargetJS) New() EventTargetValue {
 	res := js.Value(e).New()
-	return eventTargetValue(res)
+	return EventTargetValue(res)
 }
 
-type eventTargetValue js.Value
+// EventTargetValue is an instance of EventTarget.
+type EventTargetValue js.Value
 
 // AddEventListener wraps the EventTarget addEventListener instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-func (e eventTargetValue) AddEventListener(eventType string, listener js.Value, options js.Value) {
+func (e EventTargetValue) AddEventListener(eventType string, listener js.Value, options js.Value) {
 	js.Value(e).Call("addEventListener", eventType, listener, options)
 }
 
 // DispatchEvent wraps the EventTarget dispatchEvent instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
-func (e eventTargetValue) DispatchEvent(event js.Value) bool {
+func (e EventTargetValue) DispatchEvent(event js.Value) bool {
 	return js.Value(e).Call("dispatchEvent", event).Bool()
 }
 
 // RemoveEventListener wraps the EventTarget removeEventListener instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
-func (e eventTargetValue) RemoveEventListener(eventType string, listener js.Value, options js.Value) {
+func (e EventTargetValue) RemoveEventListener(eventType string, listener js.Value, options js.Value) {
 	js.Value(e).Call("removeEventListener", eventType, listener, options)
 }

@@ -44,9 +44,9 @@ func Uint8ArrayFromBytes(src []byte) Uint8ArrayValue {
 
 // BytesFromUint8Array is a helper function that copies the given
 // Uint8Array into a new byte slice.
-func BytesFromUint8Array(src js.Value) []byte {
-	len := Uint8ArrayValue(src).Length()
+func BytesFromUint8Array(src Uint8ArrayValue) []byte {
+	len := src.Length()
 	dst := make([]byte, len)
-	js.CopyBytesToGo(dst, src)
+	js.CopyBytesToGo(dst, js.Value(src))
 	return dst
 }

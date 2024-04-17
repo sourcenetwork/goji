@@ -25,6 +25,6 @@ func TestUint8ArrayFromBytes(t *testing.T) {
 	value := Uint8ArrayFromBytes(bytes)
 	assert.Equal(t, 64, value.Length())
 
-	other := BytesFromUint8Array(js.Value(value))
+	other := BytesFromUint8Array(value)
 	assert.Equal(t, bytes, other)
 }

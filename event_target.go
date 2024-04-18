@@ -46,3 +46,13 @@ func (e EventTargetValue) DispatchEvent(event js.Value) bool {
 func (e EventTargetValue) RemoveEventListener(eventType string, listener js.Value, options js.Value) {
 	js.Value(e).Call("removeEventListener", eventType, listener, options)
 }
+
+// EventListener returns a new event listener callback
+// that calls the given func when an event is received.
+func EventListener(fn func(event EventValue)) js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) any {
+		event := EventValue(args[0])
+		fn(event)
+		return js.Undefined()
+	})
+}

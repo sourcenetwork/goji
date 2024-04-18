@@ -13,15 +13,15 @@ import (
 func TestEventTargetAddListener(t *testing.T) {
 	var wait sync.WaitGroup
 
-	var listener js.Func
-	listener = js.FuncOf(func(this js.Value, args []js.Value) any {
+	// create an event listener to receive the event
+	listener := EventListener(func(event EventValue) {
 		defer wait.Done()
-		listener.Release()
-		return js.Undefined()
+		assert.Equal(t, "test", event.Type())
 	})
+	defer listener.Release()
 
 	// create an event to dispatch
-	event := Event.New("Test", js.Undefined())
+	event := Event.New("test", js.Undefined())
 
 	// setup a target and listener for the event
 	target := EventTarget.New()

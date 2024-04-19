@@ -18,9 +18,20 @@ var Event eventJS
 // New wraps the Event constructor.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/Event/Event
-func (e eventJS) New(eventType string, options js.Value) EventValue {
-	res := js.Value(e).New(eventType, options)
-	return EventValue(res)
+func (e eventJS) New(eventType string, opts ...eventOption) EventValue {
+	switch {
+	case len(opts) > 0:
+		options := js.ValueOf(map[string]any{})
+		for _, opt := range opts {
+			opt(options)
+		}
+		res := js.Value(e).New(eventType, options)
+		return EventValue(res)
+
+	default:
+		res := js.Value(e).New(eventType)
+		return EventValue(res)
+	}
 }
 
 // EventValue is an instance of Event.
@@ -124,4 +135,38 @@ func (e EventValue) StopImmediatePropagation() {
 // https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation
 func (e EventValue) StopPropagation() {
 	js.Value(e).Call("stopPropagation")
+}
+
+// EventOptions is used to set event listener options.
+var EventOptions = &eventOptions{}
+
+type eventOptions struct{}
+
+type eventOption func(value js.Value)
+
+// WithBubbles sets the bubbles options.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/Event/Event#bubbles
+func (e eventOptions) WithBubbles(enabled bool) eventOption {
+	return func(value js.Value) {
+		value.Set("bubbles", enabled)
+	}
+}
+
+// WithCancelable sets the cancelable option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/Event/Event#cancelable
+func (e eventOptions) WithCancelable(enabled bool) eventOption {
+	return func(value js.Value) {
+		value.Set("cancelable", enabled)
+	}
+}
+
+// WithComposed sets the composed option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/Event/Event#composed
+func (e eventOptions) WithComposed(enabled bool) eventOption {
+	return func(value js.Value) {
+		value.Set("composed", enabled)
+	}
 }

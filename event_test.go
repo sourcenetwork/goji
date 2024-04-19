@@ -3,14 +3,13 @@
 package goji
 
 import (
-	"syscall/js"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEventConstructor(t *testing.T) {
-	event := Event.New("test", js.Undefined())
+	event := Event.New("test")
 	assert.Equal(t, "test", event.Type())
 	assert.False(t, event.Bubbles())
 	assert.False(t, event.Cancelable())
@@ -18,13 +17,13 @@ func TestEventConstructor(t *testing.T) {
 }
 
 func TestEventConstructorWithOptions(t *testing.T) {
-	options := js.ValueOf(map[string]any{
-		"bubbles":    true,
-		"cancelable": true,
-		"composed":   true,
-	})
+	options := []eventOption{
+		EventOptions.WithBubbles(true),
+		EventOptions.WithCancelable(true),
+		EventOptions.WithComposed(true),
+	}
 
-	event := Event.New("test", options)
+	event := Event.New("test", options...)
 	assert.Equal(t, "test", event.Type())
 	assert.True(t, event.Bubbles())
 	assert.True(t, event.Cancelable())

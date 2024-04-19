@@ -21,11 +21,11 @@ func TestEventTargetAddListener(t *testing.T) {
 	defer listener.Release()
 
 	// create an event to dispatch
-	event := Event.New("test", js.Undefined())
+	event := Event.New("test")
 
 	// setup a target and listener for the event
 	target := EventTarget.New()
-	target.AddEventListener(event.Type(), listener.Value, js.Undefined())
+	target.AddEventListener(event.Type(), listener.Value)
 
 	wait.Add(1)
 	dispatched := target.DispatchEvent(js.Value(event))

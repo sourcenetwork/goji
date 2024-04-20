@@ -2,7 +2,11 @@
 
 package indexed_db
 
-import "syscall/js"
+import (
+	"syscall/js"
+
+	"github.com/sourcenetwork/goji"
+)
 
 const (
 	// The cursor shows all records, including duplicates.
@@ -56,7 +60,7 @@ func (c CursorValue) PrimaryKey() js.Value {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/request
 func (c CursorValue) Request() RequestValue {
 	res := js.Value(c).Get("request")
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Source returns the IDBCursor request property.
@@ -92,7 +96,7 @@ func (c CursorValue) ContinuePrimaryKey(key, primaryKey js.Value) {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/delete
 func (c CursorValue) Delete() RequestValue {
 	res := js.Value(c).Call("delete")
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Update wraps the IDBCursor update instance method.
@@ -100,7 +104,7 @@ func (c CursorValue) Delete() RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/update
 func (c CursorValue) Update(value js.Value) RequestValue {
 	res := js.Value(c).Call("update", value)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // CursorWithValue is an instance of IDBCursorWithValue

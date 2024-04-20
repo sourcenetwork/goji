@@ -2,7 +2,11 @@
 
 package indexed_db
 
-import "syscall/js"
+import (
+	"syscall/js"
+
+	"github.com/sourcenetwork/goji"
+)
 
 // ObjectStoreValue is an instance of IDBObjectStore.
 type ObjectStoreValue js.Value
@@ -48,7 +52,7 @@ func (o ObjectStoreValue) Transaction() TransactionValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/add
 func (o ObjectStoreValue) Add(value js.Value, key js.Value) RequestValue {
 	res := js.Value(o).Call("add", value, key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Clear wraps the IDBObjectStore clear instance method.
@@ -56,7 +60,7 @@ func (o ObjectStoreValue) Add(value js.Value, key js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/clear
 func (o ObjectStoreValue) Clear() RequestValue {
 	res := js.Value(o).Call("clear")
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Count wraps the IDBObjectStore count instance method.
@@ -64,7 +68,7 @@ func (o ObjectStoreValue) Clear() RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/count
 func (o ObjectStoreValue) Count(query js.Value) RequestValue {
 	res := js.Value(o).Call("count", query)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // CreateIndex wraps the IDBObjectStore createIndex instance method.
@@ -80,7 +84,7 @@ func (o ObjectStoreValue) CreateIndex(indexName, keyPath, options js.Value) Inde
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/delete
 func (o ObjectStoreValue) Delete(key js.Value) RequestValue {
 	res := js.Value(o).Call("delete", key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // DeleteIndex wraps the IDBObjectStore deleteIndex instance method.
@@ -95,7 +99,7 @@ func (o ObjectStoreValue) DeleteIndex(key js.Value) {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/get
 func (o ObjectStoreValue) Get(key js.Value) RequestValue {
 	res := js.Value(o).Call("get", key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // GetAll wraps the IDBObjectStore getAll instance method.
@@ -103,7 +107,7 @@ func (o ObjectStoreValue) Get(key js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getAll
 func (o ObjectStoreValue) GetAll(key js.Value, count js.Value) RequestValue {
 	res := js.Value(o).Call("getAll", key, count)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // GetAllKeys wraps the IDBObjectStore getAllKeys instance method.
@@ -111,7 +115,7 @@ func (o ObjectStoreValue) GetAll(key js.Value, count js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getAllKeys
 func (o ObjectStoreValue) GetAllKeys(key js.Value, count js.Value) RequestValue {
 	res := js.Value(o).Call("getAllKeys", key, count)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // GetKey wraps the IDBObjectStore getKey instance method.
@@ -119,7 +123,7 @@ func (o ObjectStoreValue) GetAllKeys(key js.Value, count js.Value) RequestValue 
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getKey
 func (o ObjectStoreValue) GetKey(key js.Value) RequestValue {
 	res := js.Value(o).Call("getKey", key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Index wraps the IDBObjectStore index instance method.
@@ -135,7 +139,7 @@ func (o ObjectStoreValue) Index(name string) IndexValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/openCursor
 func (o ObjectStoreValue) OpenCursor(query, direction js.Value) RequestValue {
 	res := js.Value(o).Call("openCursor", query, direction)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // OpenKeyCursor wraps the IDBObjectStore openKeyCursor instance method.
@@ -143,7 +147,7 @@ func (o ObjectStoreValue) OpenCursor(query, direction js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/openKeyCursor
 func (o ObjectStoreValue) OpenKeyCursor(query, direction js.Value) RequestValue {
 	res := js.Value(o).Call("openKeyCursor", query, direction)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Put wraps the IDBObjectStore put instance method.
@@ -151,5 +155,5 @@ func (o ObjectStoreValue) OpenKeyCursor(query, direction js.Value) RequestValue 
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/put
 func (o ObjectStoreValue) Put(item, key js.Value) RequestValue {
 	res := js.Value(o).Call("put", item, key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }

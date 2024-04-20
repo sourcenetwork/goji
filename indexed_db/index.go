@@ -4,6 +4,8 @@ package indexed_db
 
 import (
 	"syscall/js"
+
+	"github.com/sourcenetwork/goji"
 )
 
 // IndexValue is an IDBIndex instance.
@@ -52,7 +54,7 @@ func (i IndexValue) Unique() bool {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/count
 func (i IndexValue) Count(key js.Value) RequestValue {
 	res := js.Value(i).Call("count", key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // Get wraps the IDBIndex get instance method.
@@ -60,7 +62,7 @@ func (i IndexValue) Count(key js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/get
 func (i IndexValue) Get(key js.Value) RequestValue {
 	res := js.Value(i).Call("get", key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // GetAll wraps the IDBIndex getAll instance method.
@@ -68,7 +70,7 @@ func (i IndexValue) Get(key js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/getAll
 func (i IndexValue) GetAll(query, count js.Value) RequestValue {
 	res := js.Value(i).Call("getAll", query, count)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // GetAllKeys wraps the IDBIndex getAllKeys instance method.
@@ -76,7 +78,7 @@ func (i IndexValue) GetAll(query, count js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/getAllKeys
 func (i IndexValue) GetAllKeys(query, count js.Value) RequestValue {
 	res := js.Value(i).Call("getAllKeys", query, count)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // GetKey wraps the IDBIndex getKey instance method.
@@ -84,7 +86,7 @@ func (i IndexValue) GetAllKeys(query, count js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/getKey
 func (i IndexValue) GetKey(key js.Value) RequestValue {
 	res := js.Value(i).Call("getKey", key)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // OpenCursor wraps the IDBIndex openCursor instance method.
@@ -92,7 +94,7 @@ func (i IndexValue) GetKey(key js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/openCursor
 func (i IndexValue) OpenCursor(key, direction js.Value) RequestValue {
 	res := js.Value(i).Call("openCursor", key, direction)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }
 
 // OpenKeyCursor wraps the IDBIndex openKeyCursor instance method.
@@ -100,5 +102,5 @@ func (i IndexValue) OpenCursor(key, direction js.Value) RequestValue {
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/openKeyCursor
 func (i IndexValue) OpenKeyCursor(key, direction js.Value) RequestValue {
 	res := js.Value(i).Call("openKeyCursor", key, direction)
-	return RequestValue(res)
+	return RequestValue{goji.EventTargetValue(res)}
 }

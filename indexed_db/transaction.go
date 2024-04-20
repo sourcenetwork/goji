@@ -25,7 +25,7 @@ type TransactionValue goji.EventTargetValue
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBTransaction/db
 func (t TransactionValue) DB() DatabaseValue {
 	res := js.Value(t).Get("db")
-	return DatabaseValue(res)
+	return DatabaseValue{goji.EventTargetValue(res)}
 }
 
 // Durability returns the IDBTransaction durability property.

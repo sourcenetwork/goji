@@ -94,7 +94,7 @@ func (e eventListenerOptions) WithPassive(enable bool) eventListenerOption {
 // WithSignal sets the signal option.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#signal
-func (e eventListenerOption) WithSignal(signal js.Value) eventListenerOption {
+func (e eventListenerOptions) WithSignal(signal js.Value) eventListenerOption {
 	return func(value js.Value) {
 		value.Set("signal", signal)
 	}

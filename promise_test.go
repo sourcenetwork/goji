@@ -3,6 +3,7 @@
 package goji
 
 import (
+	"fmt"
 	"syscall/js"
 	"testing"
 
@@ -72,4 +73,29 @@ func TestPromiseOfThenAwaitReject(t *testing.T) {
 	res, err := Await(prom)
 	assert.Len(t, res, 0)
 	assert.Equal(t, value, err)
+}
+
+func TestPromiseAsyncResolve(t *testing.T) {
+	fn := Async(func(this js.Value, args []js.Value) (js.Value, error) {
+		return js.ValueOf(1), nil
+	})
+
+	prom := PromiseValue(fn.Invoke())
+	res, err := Await(prom)
+	require.NoError(t, err)
+
+	require.Len(t, res, 1)
+	assert.Equal(t, js.ValueOf(1), res[0])
+}
+
+func TestPromiseAsyncReject(t *testing.T) {
+	fn := Async(func(this js.Value, args []js.Value) (js.Value, error) {
+		return js.Undefined(), fmt.Errorf("rejected")
+	})
+
+	prom := PromiseValue(fn.Invoke())
+	_, err := Await(prom)
+	require.NotNil(t, err)
+
+	assert.Equal(t, "Error: rejected", err.Error())
 }

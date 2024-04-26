@@ -143,3 +143,19 @@ func Await(prom PromiseValue) (res []js.Value, err error) {
 
 	return
 }
+
+// Async is a helper function that wraps the given func in a promise that
+// resolves when no error is returned or rejects when an error is returned.
+func Async(fn func(this js.Value, args []js.Value) (js.Value, error)) js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) any {
+		prom := PromiseOf(func(resolve, reject func(value js.Value)) {
+			res, err := fn(this, args)
+			if err != nil {
+				reject(js.Value(Error.New(err.Error())))
+			} else {
+				resolve(res)
+			}
+		})
+		return js.Value(prom)
+	})
+}

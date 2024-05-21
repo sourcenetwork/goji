@@ -4,8 +4,6 @@ package indexed_db
 
 import (
 	"syscall/js"
-
-	"github.com/sourcenetwork/goji"
 )
 
 const (
@@ -15,17 +13,21 @@ const (
 	TransactionDurabilityDefault  = "default"
 	TransactionDurabilityStrict   = "strict"
 	TransactionDurabilityRelaxed  = "relaxed"
+	// The abort event is fired when an IndexedDB transaction is aborted.
+	AbortEvent = "abort"
+	// The complete event of the IndexedDB API is fired when the transaction successfully completed.
+	CompleteEvent = "complete"
 )
 
 // TransactionValue is an instance of IDBTransaction.
-type TransactionValue goji.EventTargetValue
+type TransactionValue js.Value
 
 // DB returns the IDBTransaction db property.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBTransaction/db
 func (t TransactionValue) DB() DatabaseValue {
 	res := js.Value(t).Get("db")
-	return DatabaseValue{goji.EventTargetValue(res)}
+	return DatabaseValue(res)
 }
 
 // Durability returns the IDBTransaction durability property.
@@ -76,4 +78,20 @@ func (t TransactionValue) Commit() {
 func (t TransactionValue) ObjectStore(name string) ObjectStoreValue {
 	res := js.Value(t).Call("objectStore", name)
 	return ObjectStoreValue(res)
+}
+
+// TransactionOptions is used to set transaction options.
+var TransactionOptions = &transactionOptions{}
+
+type transactionOptions struct{}
+
+type transactionOption func(opts js.Value)
+
+// WithDurability sets the transaction durability option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/transaction#durability
+func (transactionOptions) WithDurability(durability string) transactionOption {
+	return func(opts js.Value) {
+		opts.Set("durability", durability)
+	}
 }

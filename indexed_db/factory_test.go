@@ -17,15 +17,33 @@ func TestOpen(t *testing.T) {
 	})
 	defer upgradeNeeded.Release()
 
-	request := Open("test", 1)
-	request.AddEventListener(UpgradeNeededEvent, upgradeNeeded.Value)
+	request := Open(t.Name(), 1)
+	request.EventTarget().AddEventListener(UpgradeNeededEvent, upgradeNeeded.Value)
 
-	res, err := Await(request)
+	db, err := Await(request)
 	require.NoError(t, err)
+	defer db.Close()
 
 	// upgradeNeeded should have been called by this point
 	assert.True(t, upgradeCalled)
+	assert.Equal(t, 1, db.Version())
+	assert.Equal(t, t.Name(), db.Name())
+}
 
-	db := DatabaseValue{goji.EventTargetValue(res)}
-	assert.Equal(t, "test", db.Name())
+func TestDelete(t *testing.T) {
+	upgradeNeeded := goji.EventListener(func(event goji.EventValue) {
+		// do nothing
+	})
+	defer upgradeNeeded.Release()
+
+	openReq := Open(t.Name(), 1)
+	openReq.EventTarget().AddEventListener(UpgradeNeededEvent, upgradeNeeded.Value)
+
+	db, err := Await(openReq)
+	require.NoError(t, err)
+	db.Close() // must close before deleting
+
+	deleteReq := DeleteDatabase(t.Name())
+	_, err = Await(deleteReq)
+	require.NoError(t, err)
 }

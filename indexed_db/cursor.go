@@ -4,8 +4,6 @@ package indexed_db
 
 import (
 	"syscall/js"
-
-	"github.com/sourcenetwork/goji"
 )
 
 const (
@@ -58,9 +56,9 @@ func (c CursorValue) PrimaryKey() js.Value {
 // Request returns the IDBCursor request property.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/request
-func (c CursorValue) Request() RequestValue {
+func (c CursorValue) Request() RequestValue[js.Value] {
 	res := js.Value(c).Get("request")
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // Source returns the IDBCursor request property.
@@ -80,43 +78,46 @@ func (c CursorValue) Advance(count uint) {
 // Continue wraps the IDBCursor continue instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/continue
-func (c CursorValue) Continue(key js.Value) {
-	js.Value(c).Call("continue", key)
+func (c CursorValue) Continue(args ...any) {
+	js.Value(c).Call("continue", args...)
 }
 
 // ContinuePrimaryKey wraps the IDBCursor continuePrimaryKey instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/continuePrimaryKey
-func (c CursorValue) ContinuePrimaryKey(key, primaryKey js.Value) {
+func (c CursorValue) ContinuePrimaryKey(key any, primaryKey any) {
 	js.Value(c).Call("continuePrimaryKey", key, primaryKey)
 }
 
 // Delete wraps the IDBCursor delete instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/delete
-func (c CursorValue) Delete() RequestValue {
+func (c CursorValue) Delete() RequestValue[js.Value] {
 	res := js.Value(c).Call("delete")
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // Update wraps the IDBCursor update instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursor/update
-func (c CursorValue) Update(value js.Value) RequestValue {
+func (c CursorValue) Update(value any) RequestValue[js.Value] {
 	res := js.Value(c).Call("update", value)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // CursorWithValue is an instance of IDBCursorWithValue
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursorWithValue
-type CursorWithValue struct {
-	CursorValue
-}
+type CursorWithValue CursorValue
 
 // Value returns the IDBCursorWithValue value property.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursorWithValue/value
 func (c CursorWithValue) Value() js.Value {
-	return js.Value(c.CursorValue).Get("value")
+	return js.Value(c).Get("value")
+}
+
+// Cursor returns the IDBCursor.
+func (c CursorWithValue) Cursor() CursorValue {
+	return CursorValue(c)
 }

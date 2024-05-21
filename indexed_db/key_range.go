@@ -18,7 +18,7 @@ type keyRange js.Value
 // Bound wraps the IDBKeyRange bound static method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange/bound_static
-func (k keyRange) Bound(lower, upper js.Value, lowerOpen, upperOpen bool) KeyRangeValue {
+func (k keyRange) Bound(lower, upper any, lowerOpen, upperOpen bool) KeyRangeValue {
 	res := js.Value(k).Call("bound", lower, upper, lowerOpen, upperOpen)
 	return KeyRangeValue(res)
 }
@@ -26,7 +26,7 @@ func (k keyRange) Bound(lower, upper js.Value, lowerOpen, upperOpen bool) KeyRan
 // LowerBound wraps the IDBKeyRange lowerBound static method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange/lowerBound_static
-func (k keyRange) LowerBound(lower js.Value, open bool) KeyRangeValue {
+func (k keyRange) LowerBound(lower any, open bool) KeyRangeValue {
 	res := js.Value(k).Call("lowerBound", lower, open)
 	return KeyRangeValue(res)
 }
@@ -34,7 +34,7 @@ func (k keyRange) LowerBound(lower js.Value, open bool) KeyRangeValue {
 // Only wraps the IDBKeyRange only static method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange/only_static
-func (k keyRange) Only(value js.Value) KeyRangeValue {
+func (k keyRange) Only(value any) KeyRangeValue {
 	res := js.Value(k).Call("only", value)
 	return KeyRangeValue(res)
 }
@@ -42,7 +42,7 @@ func (k keyRange) Only(value js.Value) KeyRangeValue {
 // UpperBound wraps the IDBKeyRange upperBound static method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange/upperBound_static
-func (k keyRange) UpperBound(upper js.Value, open bool) KeyRangeValue {
+func (k keyRange) UpperBound(upper any, open bool) KeyRangeValue {
 	res := js.Value(k).Call("upperBound", upper, open)
 	return KeyRangeValue(res)
 }
@@ -81,6 +81,6 @@ func (k KeyRangeValue) UpperOpen() bool {
 // Includes wraps the IDBKeyRange includes instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange/includes
-func (k KeyRangeValue) Includes(key js.Value) bool {
+func (k KeyRangeValue) Includes(key any) bool {
 	return js.Value(k).Call("includes", key).Bool()
 }

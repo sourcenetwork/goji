@@ -4,8 +4,6 @@ package indexed_db
 
 import (
 	"syscall/js"
-
-	"github.com/sourcenetwork/goji"
 )
 
 // IndexValue is an IDBIndex instance.
@@ -52,55 +50,80 @@ func (i IndexValue) Unique() bool {
 // Count wraps the IDBIndex count instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/count
-func (i IndexValue) Count(key js.Value) RequestValue {
+func (i IndexValue) Count(key any) RequestValue[js.Value] {
 	res := js.Value(i).Call("count", key)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // Get wraps the IDBIndex get instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/get
-func (i IndexValue) Get(key js.Value) RequestValue {
+func (i IndexValue) Get(key any) RequestValue[js.Value] {
 	res := js.Value(i).Call("get", key)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // GetAll wraps the IDBIndex getAll instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/getAll
-func (i IndexValue) GetAll(query, count js.Value) RequestValue {
-	res := js.Value(i).Call("getAll", query, count)
-	return RequestValue{goji.EventTargetValue(res)}
+func (i IndexValue) GetAll(args ...any) RequestValue[js.Value] {
+	res := js.Value(i).Call("getAll", args...)
+	return RequestValue[js.Value](res)
 }
 
 // GetAllKeys wraps the IDBIndex getAllKeys instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/getAllKeys
-func (i IndexValue) GetAllKeys(query, count js.Value) RequestValue {
-	res := js.Value(i).Call("getAllKeys", query, count)
-	return RequestValue{goji.EventTargetValue(res)}
+func (i IndexValue) GetAllKeys(args ...any) RequestValue[js.Value] {
+	res := js.Value(i).Call("getAllKeys", args...)
+	return RequestValue[js.Value](res)
 }
 
 // GetKey wraps the IDBIndex getKey instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/getKey
-func (i IndexValue) GetKey(key js.Value) RequestValue {
+func (i IndexValue) GetKey(key any) RequestValue[js.Value] {
 	res := js.Value(i).Call("getKey", key)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // OpenCursor wraps the IDBIndex openCursor instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/openCursor
-func (i IndexValue) OpenCursor(key, direction js.Value) RequestValue {
-	res := js.Value(i).Call("openCursor", key, direction)
-	return RequestValue{goji.EventTargetValue(res)}
+func (i IndexValue) OpenCursor(args ...any) RequestValue[CursorWithValue] {
+	res := js.Value(i).Call("openCursor", args...)
+	return RequestValue[CursorWithValue](res)
 }
 
 // OpenKeyCursor wraps the IDBIndex openKeyCursor instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/openKeyCursor
-func (i IndexValue) OpenKeyCursor(key, direction js.Value) RequestValue {
-	res := js.Value(i).Call("openKeyCursor", key, direction)
-	return RequestValue{goji.EventTargetValue(res)}
+func (i IndexValue) OpenKeyCursor(args ...any) RequestValue[CursorValue] {
+	res := js.Value(i).Call("openKeyCursor", args...)
+	return RequestValue[CursorValue](res)
+}
+
+// IndexOptions is used to set index options.
+var IndexOptions = &indexOptions{}
+
+type indexOptions struct{}
+
+type indexOption func(opts js.Value)
+
+// WithUnique sets the index unique option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/createIndex#unique
+func WithUnique(enabled bool) indexOption {
+	return func(opts js.Value) {
+		opts.Set("unique", enabled)
+	}
+}
+
+// WithMultiEntry sets the index multiEntry option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/createIndex#multientry
+func WithMultiEntry(enabled bool) indexOption {
+	return func(opts js.Value) {
+		opts.Set("multiEntry", enabled)
+	}
 }

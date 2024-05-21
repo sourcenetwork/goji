@@ -4,8 +4,6 @@ package indexed_db
 
 import (
 	"syscall/js"
-
-	"github.com/sourcenetwork/goji"
 )
 
 // ObjectStoreValue is an instance of IDBObjectStore.
@@ -50,80 +48,91 @@ func (o ObjectStoreValue) Transaction() TransactionValue {
 // Add wraps the IDBObjectStore add instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/add
-func (o ObjectStoreValue) Add(value js.Value, key js.Value) RequestValue {
-	res := js.Value(o).Call("add", value, key)
-	return RequestValue{goji.EventTargetValue(res)}
+func (o ObjectStoreValue) Add(args ...any) RequestValue[js.Value] {
+	res := js.Value(o).Call("add", args...)
+	return RequestValue[js.Value](res)
 }
 
 // Clear wraps the IDBObjectStore clear instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/clear
-func (o ObjectStoreValue) Clear() RequestValue {
+func (o ObjectStoreValue) Clear() RequestValue[js.Value] {
 	res := js.Value(o).Call("clear")
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // Count wraps the IDBObjectStore count instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/count
-func (o ObjectStoreValue) Count(query js.Value) RequestValue {
+func (o ObjectStoreValue) Count(query any) RequestValue[js.Value] {
 	res := js.Value(o).Call("count", query)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // CreateIndex wraps the IDBObjectStore createIndex instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/createIndex
-func (o ObjectStoreValue) CreateIndex(indexName, keyPath, options js.Value) IndexValue {
-	res := js.Value(o).Call("createIndex", indexName, keyPath, options)
-	return IndexValue(res)
+func (o ObjectStoreValue) CreateIndex(indexName string, keyPath any, opts ...indexOption) IndexValue {
+	switch {
+	case len(opts) > 0:
+		options := js.ValueOf(map[string]any{})
+		for _, opt := range opts {
+			opt(options)
+		}
+		res := js.Value(o).Call("createIndex", indexName, keyPath, options)
+		return IndexValue(res)
+
+	default:
+		res := js.Value(o).Call("createIndex", indexName, keyPath)
+		return IndexValue(res)
+	}
 }
 
 // Delete wraps the IDBObjectStore delete instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/delete
-func (o ObjectStoreValue) Delete(key js.Value) RequestValue {
+func (o ObjectStoreValue) Delete(key any) RequestValue[js.Value] {
 	res := js.Value(o).Call("delete", key)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // DeleteIndex wraps the IDBObjectStore deleteIndex instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/deleteIndex
-func (o ObjectStoreValue) DeleteIndex(key js.Value) {
+func (o ObjectStoreValue) DeleteIndex(key any) {
 	js.Value(o).Call("deleteIndex", key)
 }
 
 // Get wraps the IDBObjectStore get instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/get
-func (o ObjectStoreValue) Get(key js.Value) RequestValue {
+func (o ObjectStoreValue) Get(key any) RequestValue[js.Value] {
 	res := js.Value(o).Call("get", key)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // GetAll wraps the IDBObjectStore getAll instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getAll
-func (o ObjectStoreValue) GetAll(key js.Value, count js.Value) RequestValue {
-	res := js.Value(o).Call("getAll", key, count)
-	return RequestValue{goji.EventTargetValue(res)}
+func (o ObjectStoreValue) GetAll(args ...any) RequestValue[js.Value] {
+	res := js.Value(o).Call("getAll", args...)
+	return RequestValue[js.Value](res)
 }
 
 // GetAllKeys wraps the IDBObjectStore getAllKeys instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getAllKeys
-func (o ObjectStoreValue) GetAllKeys(key js.Value, count js.Value) RequestValue {
-	res := js.Value(o).Call("getAllKeys", key, count)
-	return RequestValue{goji.EventTargetValue(res)}
+func (o ObjectStoreValue) GetAllKeys(args ...any) RequestValue[js.Value] {
+	res := js.Value(o).Call("getAllKeys", args...)
+	return RequestValue[js.Value](res)
 }
 
 // GetKey wraps the IDBObjectStore getKey instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getKey
-func (o ObjectStoreValue) GetKey(key js.Value) RequestValue {
+func (o ObjectStoreValue) GetKey(key any) RequestValue[js.Value] {
 	res := js.Value(o).Call("getKey", key)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[js.Value](res)
 }
 
 // Index wraps the IDBObjectStore index instance method.
@@ -137,23 +146,48 @@ func (o ObjectStoreValue) Index(name string) IndexValue {
 // OpenCursor wraps the IDBObjectStore openCursor instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/openCursor
-func (o ObjectStoreValue) OpenCursor(query, direction js.Value) RequestValue {
-	res := js.Value(o).Call("openCursor", query, direction)
-	return RequestValue{goji.EventTargetValue(res)}
+func (o ObjectStoreValue) OpenCursor(args ...any) RequestValue[CursorWithValue] {
+	res := js.Value(o).Call("openCursor", args...)
+	return RequestValue[CursorWithValue](res)
 }
 
 // OpenKeyCursor wraps the IDBObjectStore openKeyCursor instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/openKeyCursor
-func (o ObjectStoreValue) OpenKeyCursor(query, direction js.Value) RequestValue {
-	res := js.Value(o).Call("openKeyCursor", query, direction)
-	return RequestValue{goji.EventTargetValue(res)}
+func (o ObjectStoreValue) OpenKeyCursor(args ...any) RequestValue[CursorValue] {
+	res := js.Value(o).Call("openKeyCursor", args...)
+	return RequestValue[CursorValue](res)
 }
 
 // Put wraps the IDBObjectStore put instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/put
-func (o ObjectStoreValue) Put(item, key js.Value) RequestValue {
-	res := js.Value(o).Call("put", item, key)
-	return RequestValue{goji.EventTargetValue(res)}
+func (o ObjectStoreValue) Put(args ...any) RequestValue[js.Value] {
+	res := js.Value(o).Call("put", args...)
+	return RequestValue[js.Value](res)
+}
+
+// ObjectStoreOptions is used to set object store options.
+var ObjectStoreOptions = &objectStoreOptions{}
+
+type objectStoreOptions struct{}
+
+type objectStoreOption func(opts js.Value)
+
+// WithKeyPath sets the key path option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/createObjectStore#keypath
+func (objectStoreOptions) WithKeyPath(keyPath any) objectStoreOption {
+	return func(opts js.Value) {
+		opts.Set("keyPath", keyPath)
+	}
+}
+
+// WithAutoIncrement sets the auto increment option.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/createObjectStore#autoincrement
+func (objectStoreOptions) WithAutoIncrement(enabled bool) objectStoreOption {
+	return func(opts js.Value) {
+		opts.Set("autoIncrement", enabled)
+	}
 }

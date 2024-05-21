@@ -28,23 +28,23 @@ var indexedDB js.Value
 // Open wraps the IDBFactory open method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBFactory/open
-func Open(name string, version uint) RequestValue {
+func Open(name string, version uint) RequestValue[DatabaseValue] {
 	res := indexedDB.Call("open", name, version)
-	return RequestValue{goji.EventTargetValue(res)}
+	return RequestValue[DatabaseValue](res)
 }
 
 // DeleteDatabase wraps the IDBFactory deleteDatabase method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBFactory/deleteDatabase
-func DeleteDatabase(name string, options js.Value) RequestValue {
-	res := indexedDB.Call("deleteDatabase", name, options)
-	return RequestValue{goji.EventTargetValue(res)}
+func DeleteDatabase(name string) RequestValue[js.Value] {
+	res := indexedDB.Call("deleteDatabase", name)
+	return RequestValue[js.Value](res)
 }
 
 // Cmp wraps the IDBFactory cmp method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBFactory/cmp
-func Cmp(first, second js.Value) int {
+func Cmp(first any, second any) int {
 	return indexedDB.Call("cmp", first, second).Int()
 }
 

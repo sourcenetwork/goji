@@ -20,7 +20,7 @@ const (
 
 // RequestResult is the type union for request results.
 type RequestResult interface {
-	js.Value | DatabaseValue | CursorValue | CursorWithValue
+	js.Value | DatabaseValue | CursorValue
 }
 
 // RequestValue is an instance of IDBRequest.

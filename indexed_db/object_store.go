@@ -146,9 +146,9 @@ func (o ObjectStoreValue) Index(name string) IndexValue {
 // OpenCursor wraps the IDBObjectStore openCursor instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/openCursor
-func (o ObjectStoreValue) OpenCursor(args ...any) RequestValue[CursorWithValue] {
+func (o ObjectStoreValue) OpenCursor(args ...any) RequestValue[CursorValue] {
 	res := js.Value(o).Call("openCursor", args...)
-	return RequestValue[CursorWithValue](res)
+	return RequestValue[CursorValue](res)
 }
 
 // OpenKeyCursor wraps the IDBObjectStore openKeyCursor instance method.

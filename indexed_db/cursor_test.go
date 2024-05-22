@@ -37,14 +37,13 @@ func TestCursor(t *testing.T) {
 	require.NoError(t, err)
 
 	var cursorWait sync.WaitGroup
-	var cursorReq RequestValue[CursorWithValue]
+	var cursorReq RequestValue[CursorValue]
 	cursorSuccess := goji.EventListener(func(event goji.EventValue) {
 		value := cursorReq.Result()
 		if !js.Value(value).IsNull() {
-			value.Cursor().Continue()
+			value.Continue()
 		}
 		cursorWait.Done()
-
 	})
 	defer cursorSuccess.Release()
 

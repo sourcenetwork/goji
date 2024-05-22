@@ -90,9 +90,9 @@ func (i IndexValue) GetKey(key any) RequestValue[js.Value] {
 // OpenCursor wraps the IDBIndex openCursor instance method.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/openCursor
-func (i IndexValue) OpenCursor(args ...any) RequestValue[CursorWithValue] {
+func (i IndexValue) OpenCursor(args ...any) RequestValue[CursorValue] {
 	res := js.Value(i).Call("openCursor", args...)
-	return RequestValue[CursorWithValue](res)
+	return RequestValue[CursorValue](res)
 }
 
 // OpenKeyCursor wraps the IDBIndex openKeyCursor instance method.

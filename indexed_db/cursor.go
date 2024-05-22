@@ -105,19 +105,9 @@ func (c CursorValue) Update(value any) RequestValue[js.Value] {
 	return RequestValue[js.Value](res)
 }
 
-// CursorWithValue is an instance of IDBCursorWithValue
-//
-// https://developer.mozilla.org/en-US/docs/Web/API/IDBCursorWithValue
-type CursorWithValue CursorValue
-
 // Value returns the IDBCursorWithValue value property.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/IDBCursorWithValue/value
-func (c CursorWithValue) Value() js.Value {
+func (c CursorValue) Value() js.Value {
 	return js.Value(c).Get("value")
-}
-
-// Cursor returns the IDBCursor.
-func (c CursorWithValue) Cursor() CursorValue {
-	return CursorValue(c)
 }

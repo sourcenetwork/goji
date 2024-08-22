@@ -2,7 +2,10 @@
 
 package goji
 
-import "syscall/js"
+import (
+	"reflect"
+	"syscall/js"
+)
 
 func init() {
 	Error = errorJS(js.Global().Get("Error"))
@@ -34,4 +37,16 @@ type ErrorValue js.Value
 func (v ErrorValue) Error() string {
 	res := js.Value(v).Call("toString")
 	return res.String()
+}
+
+// WrapError is a helper func that returns an ErrorValue with the message
+// set to the given error's `Error()` value and the name set to the
+// given error's reflected type name.
+func WrapError(err error) ErrorValue {
+	wrap := Error.New(err.Error())
+	name := reflect.TypeOf(err).Elem().Name()
+	if name != "" {
+		js.Value(wrap).Set("name", name)
+	}
+	return wrap
 }

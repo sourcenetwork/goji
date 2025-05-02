@@ -97,5 +97,5 @@ func TestPromiseAsyncReject(t *testing.T) {
 	_, err := Await(prom)
 	require.NotNil(t, err)
 
-	assert.Equal(t, "Error: rejected", err.Error())
+	assert.Equal(t, "rejected", err.Error())
 }

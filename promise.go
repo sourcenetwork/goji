@@ -112,7 +112,9 @@ func PromiseOf(fn func(resolve, reject func(value js.Value))) PromiseValue {
 		reject := func(value js.Value) {
 			args[1].Invoke(value)
 		}
-		fn(resolve, reject)
+		// the function must run in a new go routine
+		// to avoid blocking the render thread in JS
+		go fn(resolve, reject)
 		return js.Undefined()
 	})
 	return Promise.New(executor)

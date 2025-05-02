@@ -20,7 +20,7 @@ func (CustomError) Error() string {
 
 func TestErrorNew(t *testing.T) {
 	err := Error.New("test message")
-	assert.Equal(t, "Error: test message", err.Error())
+	assert.Equal(t, "test message", err.Error())
 }
 
 func TestWrapError(t *testing.T) {

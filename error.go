@@ -23,6 +23,7 @@ var Error errorJS
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error
 func (e errorJS) New(message string) ErrorValue {
 	res := js.Value(e).New(message)
+	res.Set("name", "")
 	return ErrorValue(res)
 }
 

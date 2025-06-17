@@ -48,3 +48,28 @@ func TestUnmarshalJS(t *testing.T) {
 	// should be the same
 	assert.Equal(t, expect, actual)
 }
+
+func TestMustMarshalJS(t *testing.T) {
+	expect := customType{
+		Name: "Alice",
+		Age:  42,
+	}
+
+	value := MustMarshalJS(expect)
+	assert.Equal(t, expect.Name, value.Get("name").String())
+	assert.Equal(t, expect.Age, value.Get("Age").Int())
+}
+
+func TestMustUnmarshalJS(t *testing.T) {
+	expect := customType{
+		Name: "Bob",
+		Age:  41,
+	}
+
+	value, err := MarshalJS(expect)
+	require.NoError(t, err)
+
+	var actual customType
+	MustUnmarshalJS(value, &actual)
+	assert.Equal(t, expect, actual)
+}

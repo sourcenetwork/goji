@@ -46,3 +46,20 @@ func UnmarshalJS(value js.Value, v any) error {
 	text := JSON.Stringify(value)
 	return json.Unmarshal([]byte(text), v)
 }
+
+// MustMarshalJS marshals the given value into a js.Value or panics.
+func MustMarshalJS(v any) js.Value {
+	value, err := MarshalJS(v)
+	if err != nil {
+		panic(err)
+	}
+	return value
+}
+
+// MustUnmarshalJS unmarshals the given js.Value into the given pointer or panics.
+func MustUnmarshalJS(value js.Value, v any) {
+	err := UnmarshalJS(value, v)
+	if err != nil {
+		panic(err)
+	}
+}

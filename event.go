@@ -6,6 +6,7 @@ import "syscall/js"
 
 func init() {
 	Event = eventJS(js.Global().Get("Event"))
+	CustomEvent = customEventJS(js.Global().Get("CustomEvent"))
 }
 
 type eventJS js.Value
@@ -169,4 +170,39 @@ func (e eventOptions) WithComposed(enabled bool) eventOption {
 	return func(value js.Value) {
 		value.Set("composed", enabled)
 	}
+}
+
+type customEventJS js.Value
+
+// Event is a wrapper for the CustomEvent global interface.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+var CustomEvent customEventJS
+
+// New wraps the CustomEvent constructor.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+func (e customEventJS) New(eventType string, detail js.Value, opts ...eventOption) CustomEventValue {
+	options := js.ValueOf(map[string]any{})
+	for _, opt := range opts {
+		opt(options)
+	}
+	options.Set("detail", detail)
+	res := js.Value(e).New(eventType, options)
+	return CustomEventValue(res)
+}
+
+// CustomEventValue is an instance of CustomEvent.
+type CustomEventValue js.Value
+
+// Detail returns the detail property of the CustomEvent.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/detail
+func (e CustomEventValue) Detail() js.Value {
+	return js.Value(e).Get("detail")
+}
+
+// Event returns the parent Event.
+func (e CustomEventValue) Event() EventValue {
+	return EventValue(e)
 }

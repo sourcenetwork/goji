@@ -18,7 +18,7 @@ var Uint8Array uint8ArrayJS
 // New is a wrapper for the Uint8Array constructor.
 //
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/Uint8Array
-func (a uint8ArrayJS) New(length js.Value) Uint8ArrayValue {
+func (a uint8ArrayJS) New(length any) Uint8ArrayValue {
 	res := js.Value(a).New(length)
 	return Uint8ArrayValue(res)
 }

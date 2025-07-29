@@ -5,7 +5,6 @@ package goji
 import (
 	"crypto/rand"
 	"io"
-	"syscall/js"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestUint8New(t *testing.T) {
-	value := Uint8Array.New(js.ValueOf(10))
+	value := Uint8Array.New(10)
 	assert.Equal(t, 10, value.Length())
 }
 

@@ -3,7 +3,7 @@
 package goji
 
 import (
-	"sync"
+	"context"
 	"syscall/js"
 )
 
@@ -120,30 +120,46 @@ func PromiseOf(fn func(resolve, reject func(value js.Value))) PromiseValue {
 	return Promise.New(executor)
 }
 
-// Await is a helper function that waits for a promise to resolve or reject
+// awaitResult contains the promise results.
+type awaitResult struct {
+	val []js.Value
+	err error
+}
+
+// AwaitContext is a helper function that waits for a promise to resolve or reject
 // and returns the results and an error value.
-func Await(prom PromiseValue) (res []js.Value, err error) {
-	var wait sync.WaitGroup
+//
+// This helper function supports context cancellation.
+func AwaitContext(ctx context.Context, promise PromiseValue) ([]js.Value, error) {
+	res := make(chan awaitResult)
+	defer close(res)
 
 	onFulfilled := js.FuncOf(func(this js.Value, args []js.Value) any {
-		defer wait.Done()
-		res = args
+		res <- awaitResult{val: args}
 		return js.Undefined()
 	})
 	defer onFulfilled.Release()
 
 	onRejected := js.FuncOf(func(this js.Value, args []js.Value) any {
-		defer wait.Done()
-		err = ErrorValue(args[0])
+		res <- awaitResult{err: ErrorValue(args[0])}
 		return js.Undefined()
 	})
 	defer onRejected.Release()
 
-	wait.Add(1)
-	prom.Then(onFulfilled).Catch(onRejected)
-	wait.Wait()
+	promise.Then(onFulfilled).Catch(onRejected)
 
-	return
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case out := <-res:
+		return out.val, out.err
+	}
+}
+
+// Await is a helper function that waits for a promise to resolve or reject
+// and returns the results and an error value.
+func Await(promise PromiseValue) ([]js.Value, error) {
+	return AwaitContext(context.Background(), promise)
 }
 
 // Async is a helper function that wraps the given func in a promise that

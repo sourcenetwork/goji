@@ -1,7 +1,8 @@
 .PHONY: deps\:test
 deps\:test:
 	go install github.com/agnivade/wasmbrowsertest@latest
+	go install github.com/sourcenetwork/web-transport-echo-server@latest
 
 .PHONY: test
 test:
-	GOOS=js GOARCH=wasm go test -timeout 30s -exec wasmbrowsertest ./...
+	./run-tests.sh

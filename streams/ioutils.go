@@ -3,25 +3,31 @@
 package streams
 
 import (
+	"context"
 	"io"
 	"syscall/js"
 
 	"github.com/sourcenetwork/goji"
 )
 
-var _ io.ReadCloser = (*reader)(nil)
+var _ io.ReadCloser = (*Reader)(nil)
 
-type reader struct {
+// Reader wraps a ReadableStreamBYOBReaderValue into an io.ReadCloser.
+type Reader struct {
 	read ReadableStreamBYOBReaderValue
 	done bool
 }
 
-// NewReader wraps a ReadableStreamBYOBReaderValue into an io.ReadCloser.
-func NewReader(read ReadableStreamBYOBReaderValue) io.ReadCloser {
-	return &reader{read: read}
+// NewReader returns a new Reader that reads from the provided ReadableStreamBYOBReaderValue.
+func NewReader(read ReadableStreamBYOBReaderValue) *Reader {
+	return &Reader{read: read}
 }
 
-func (r *reader) Read(b []byte) (n int, err error) {
+func (r *Reader) Read(b []byte) (n int, err error) {
+	return r.ReadContext(context.Background(), b)
+}
+
+func (r *Reader) ReadContext(ctx context.Context, b []byte) (n int, err error) {
 	if len(b) == 0 {
 		return 0, nil
 	}
@@ -29,7 +35,7 @@ func (r *reader) Read(b []byte) (n int, err error) {
 		return 0, io.EOF
 	}
 	view := goji.Uint8Array.New(len(b))
-	res, err := goji.Await(r.read.Read(js.Value(view)))
+	res, err := goji.AwaitContext(ctx, r.read.Read(js.Value(view)))
 	if err != nil {
 		return 0, err
 	}
@@ -38,35 +44,45 @@ func (r *reader) Read(b []byte) (n int, err error) {
 	return copied, nil
 }
 
-func (r *reader) Close() error {
+func (r *Reader) Close() error {
 	_, err := goji.Await(r.read.Cancel("user requested"))
 	return err
 }
 
-var _ io.WriteCloser = (*writer)(nil)
+var _ io.WriteCloser = (*Writer)(nil)
 
-type writer struct {
+// Writer wraps a WritableStreamDefaultWriterValue into an io.WriteCloser.
+type Writer struct {
 	write WritableStreamDefaultWriterValue
 }
 
-// NewWriter wraps a WritableStreamDefaultWriterValue into an io.WriteCloser.
-func NewWriter(write WritableStreamDefaultWriterValue) io.WriteCloser {
-	return &writer{write}
+// NewWriter returns a new writer that writes to the provided WritableStreamDefaultWriterValue.
+func NewWriter(write WritableStreamDefaultWriterValue) *Writer {
+	return &Writer{write}
 }
 
-func (w *writer) Write(b []byte) (n int, err error) {
+func (w *Writer) Write(b []byte) (n int, err error) {
+	return w.WriteContext(context.Background(), b)
+}
+
+func (w *Writer) WriteContext(ctx context.Context, b []byte) (n int, err error) {
 	if len(b) == 0 {
 		return 0, nil
 	}
 	view := goji.Uint8ArrayFromBytes(b)
-	_, err = goji.Await(w.write.Write(js.Value(view)))
+	_, err = goji.AwaitContext(ctx, w.write.Write(js.Value(view)))
 	if err != nil {
 		return 0, err
 	}
 	return len(b), nil
 }
 
-func (w *writer) Close() error {
+func (w *Writer) Close() error {
 	_, err := goji.Await(w.write.Close())
+	return err
+}
+
+func (w *Writer) Abort() error {
+	_, err := goji.Await(w.write.Abort("user requested"))
 	return err
 }
